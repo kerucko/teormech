@@ -19,8 +19,8 @@ def animation(i):
     VArrow.set_data(RArrowVX + X[i] + VX[i], RArrowVY + Y[i] + VY[i])
     RArrowAX, RArrowAY = Rotation(ArrowX, ArrowY, math.atan2(AY[i], AX[i]))
     AArrow.set_data(RArrowAX + X[i] + AX[i], RArrowAY + Y[i] + AY[i])
-    # NLine.set_data([X[i], (X[i] + Y[i]) * k[i]], [Y[i], (Y[i] - X[i]) * k[i]])
-    # print(k[i])
+    NLine.set_data([X[i], (X[i] + Y[i]) * k[i]], [Y[i], (Y[i] - X[i]) * k[i]])
+    print(k[i])
     return P, VLine, ALine, VArrow, AArrow
 
 
@@ -28,11 +28,8 @@ t = sp.Symbol('t')
 R = 10
 S = 5
 
-# r = sp.cos(6 * t)
-# fi = t + 0.2 * sp.cos(3 * t)
-
-r = 2 + sp.sin(6 * t)
-fi = 6.5 * t + 1.2 * sp.cos(6 * t)
+r = sp.cos(6 * t)
+fi = t + 0.2 * sp.cos(3 * t)
 
 x = r * sp.cos(fi)
 y = r * sp.sin(fi)
