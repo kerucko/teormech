@@ -19,30 +19,37 @@ def animation(i):
     VArrow.set_data(RArrowVX + X[i] + VX[i], RArrowVY + Y[i] + VY[i])
     RArrowAX, RArrowAY = Rotation(ArrowX, ArrowY, math.atan2(AY[i], AX[i]))
     AArrow.set_data(RArrowAX + X[i] + AX[i], RArrowAY + Y[i] + AY[i])
-    # NLine.set_data([X[i], (X[i] + Y[i]) * k[i]], [Y[i], (Y[i] - X[i]) * k[i]])
-    # print(k[i])
-    return P, VLine, ALine, VArrow, AArrow
+    Cvector.set_data([X[i], X[i] + AX[i] - VX[i]], [Y[i], Y[i] + AY[i] - VY[i]])
+    return P, VLine, ALine, VArrow, AArrow, Cvector,
 
 
 t = sp.Symbol('t')
-R = 10
-S = 5
+R = 75
+S = 4
 
 # r = sp.cos(6 * t)
 # fi = t + 0.2 * sp.cos(3 * t)
 
-r = 2 + sp.sin(6 * t)
-fi = 6.5 * t + 1.2 * sp.cos(6 * t)
+# r = 2 + sp.sin(6 * t)
+# fi = 6.5 * t + 1.2 * sp.cos(6 * t)
 
-x = r * sp.cos(fi)
-y = r * sp.sin(fi)
+# x = r * sp.cos(fi)
+# y = r * sp.sin(fi)
+
+x = t ** 2
+y = 10 * sp.sin(t)
 
 Vx = sp.diff(x, t)
 Vy = sp.diff(y, t)
 Ax = sp.diff(Vx, t)
 Ay = sp.diff(Vy, t)
+V = sp.sqrt(Vx ** 2 + Vy ** 2)
+Afull = sp.sqrt(Ax ** 2 + Ay ** 2)
+Atan = sp.diff(V)
+An = sp.sqrt(Afull ** 2 - Atan ** 2)
+Сurve = V ** 2 / An
 
-T = np.linspace(0, 15, 1000)
+T = np.linspace(0, 8, 1500)
 
 X = np.zeros_like(T)
 Y = np.zeros_like(T)
@@ -50,7 +57,7 @@ VX = np.zeros_like(T)
 VY = np.zeros_like(T)
 AX = np.zeros_like(T)
 AY = np.zeros_like(T)
-# k = np.zeros_like(T)
+CV = np.zeros_like(T)
 
 for i in np.arange(len(T)):
     X[i] = sp.Subs(x, t, T[i])
@@ -59,22 +66,13 @@ for i in np.arange(len(T)):
     VY[i] = sp.Subs(Vy, t, T[i])
     AX[i] = sp.Subs(Ax, t, T[i])
     AY[i] = sp.Subs(Ay, t, T[i])
-    # V = np.array(VX[i], VY[i])
-    # A = np.array(AX[i], AY[i])
-    # Vn = np.linalg.norm(V)
-    # An = np.linalg.norm(A)
-    # norms = Vn * An
-    # dot_pr = V.dot(A)
-    # sin = np.sin(np.arccos(dot_pr / norms))
-    # k[i] = Vn ** 2 / (An * sin)
-    # if a == 0 or sin == 0:
-    #     print(An, sin, dot_pr, norms)
+    CV[i] = sp.Subs(Сurve, t, T[i])
 
 fig = plt.figure()
 
 ax1 = fig.add_subplot(1, 1, 1)
 ax1.axis('equal')
-ax1.set(xlim=[-R, R], ylim=[-R, R])
+ax1.set(xlim=[0, R], ylim=[-R, R])
 
 ax1.plot(X, Y)
 
@@ -87,8 +85,8 @@ RArrowVX, RArrowVY = Rotation(ArrowX, ArrowY, math.atan2(VY[0], VX[0]))
 VArrow, = ax1.plot(RArrowVX + X[0] + VX[0], RArrowVY + Y[0] + VY[0], 'r')
 RArrowAX, RArrowAY = Rotation(ArrowX, ArrowY, math.atan2(AY[0], AX[0]))
 AArrow, = ax1.plot(RArrowAX + X[0] + AX[0], RArrowAY + Y[0] + AY[0], 'y')
-# NLine, = ax1.plot([X[0], (X[0] + Y[0]) * k[0]], [Y[0], (Y[0] - X[0]) * k[0]], 'black')
+Cvector, = ax1.plot([X[0], X[0] + AX[0] - VX[0]], [Y[0], Y[0] + AY[0] - VY[0]], 'orange')
 
-anim = FuncAnimation(fig, animation, frames=1000, interval=2, blit=True, repeat=True)
+anim = FuncAnimation(fig, animation, frames=1500, interval=6, blit=True, repeat=True)
 
 plt.show()
