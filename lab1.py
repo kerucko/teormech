@@ -19,8 +19,8 @@ def animation(i):
     VArrow.set_data(RArrowVX + X[i] + VX[i], RArrowVY + Y[i] + VY[i])
     RArrowAX, RArrowAY = Rotation(ArrowX, ArrowY, math.atan2(AY[i], AX[i]))
     AArrow.set_data(RArrowAX + X[i] + AX[i], RArrowAY + Y[i] + AY[i])
-    Cvector.set_data([X[i], X[i] + AX[i] - VX[i]], [Y[i], Y[i] + AY[i] - VY[i]])
-    return P, VLine, ALine, VArrow, AArrow, Cvector,
+    CVector.set_data([X[i], X[i] + ANX[i] * CV[i]], [Y[i], Y[i] + ANY[i] * CV[i]])
+    return P, VLine, ALine, VArrow, AArrow, CVector,
 
 
 t = sp.Symbol('t')
@@ -57,6 +57,8 @@ VX = np.zeros_like(T)
 VY = np.zeros_like(T)
 AX = np.zeros_like(T)
 AY = np.zeros_like(T)
+ANX = np.zeros_like(T)
+ANY = np.zeros_like(T)
 CV = np.zeros_like(T)
 
 for i in np.arange(len(T)):
@@ -66,6 +68,8 @@ for i in np.arange(len(T)):
     VY[i] = sp.Subs(Vy, t, T[i])
     AX[i] = sp.Subs(Ax, t, T[i])
     AY[i] = sp.Subs(Ay, t, T[i])
+    ANX[i] = VY[i] / math.sqrt(VX[i] ** 2 + VY[i] ** 2)
+    ANY[i] = -VX[i] / math.sqrt(VX[i] ** 2 + VY[i] ** 2)
     CV[i] = sp.Subs(Сurve, t, T[i])
 
 fig = plt.figure()
@@ -85,7 +89,7 @@ RArrowVX, RArrowVY = Rotation(ArrowX, ArrowY, math.atan2(VY[0], VX[0]))
 VArrow, = ax1.plot(RArrowVX + X[0] + VX[0], RArrowVY + Y[0] + VY[0], 'r')
 RArrowAX, RArrowAY = Rotation(ArrowX, ArrowY, math.atan2(AY[0], AX[0]))
 AArrow, = ax1.plot(RArrowAX + X[0] + AX[0], RArrowAY + Y[0] + AY[0], 'y')
-Cvector, = ax1.plot([X[0], X[0] + AX[0] - VX[0]], [Y[0], Y[0] + AY[0] - VY[0]], 'orange')
+CVector, = ax1.plot([X[0], X[0] + ANX[0] * CV[0]], [Y[0], Y[0] + ANY[0] * CV[0]], 'orange')
 
 anim = FuncAnimation(fig, animation, frames=1500, interval=6, blit=True, repeat=True)
 
